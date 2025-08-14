@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>80 Tahun Kemerdekaan RI & 7 Tahun KAMI Unity Day</title>
+    <style>
+        /* Background gradient bergerak */
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: linear-gradient(135deg, #ff0000, #ffffff, #008000, #00bfff);
+            background-size: 400% 400%;
+            animation: gradientBG 10s ease infinite;
+            color: #fff;
+            overflow-x: hidden;
+        }
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Header */
+        header {
+            padding: 1rem 1rem 0.5rem;
+            position: relative;
+            z-index: 2;
+        }
+        header img {
+            max-width: 150px;
+            height: auto;
+            margin-bottom: 1rem;
+        }
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+        }
+        header h2 {
+            font-size: 1.5rem;
+            margin-top: 0;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+        }
+
+        /* Bendera */
+        .flag {
+            margin: 1rem auto;
+            width: 200px;
+            height: 120px;
+            background: linear-gradient(to bottom, red 50%, white 50%);
+            border: 2px solid #fff;
+            border-radius: 5px;
+            animation: wave 2s infinite ease-in-out;
+            position: relative;
+            z-index: 2;
+        }
+        @keyframes wave {
+            0% { transform: rotate(0deg) translateX(0); }
+            25% { transform: rotate(2deg) translateX(2px); }
+            50% { transform: rotate(0deg) translateX(0); }
+            75% { transform: rotate(-2deg) translateX(-2px); }
+            100% { transform: rotate(0deg) translateX(0); }
+        }
+
+        /* Countdown */
+        main {
+            padding: 1rem;
+            position: relative;
+            z-index: 2;
+        }
+        .countdown {
+            font-size: 2rem;
+            margin-top: 1rem;
+            font-weight: bold;
+            background: rgba(0,0,0,0.3);
+            display: inline-block;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+        }
+
+        /* Footer */
+        footer {
+            padding: 1rem;
+            background-color: rgba(0,0,0,0.3);
+            margin-top: 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Responsif */
+        @media (max-width: 600px) {
+            header h1 {
+                font-size: 1.8rem;
+            }
+            .countdown {
+                font-size: 1.5rem;
+                padding: 0.5rem 1rem;
+            }
+            .flag {
+                width: 150px;
+                height: 90px;
+            }
+        }
+
+        /* Canvas untuk kembang api */
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="fireworks"></canvas>
+
+    <header>
+        <!-- Ganti URL logo jika perlu -->
+        <img src="https://kalbemilko.sementara.net/wp-content/uploads/2017/10/Logo-KALBE-MILKO.png" "alt=" PT. Kalbe Milko Indonesia">
+        
+        <h1>🇮🇩 80 Tahun Kemerdekaan Republik Indonesia</h1>
+        <h2>🎉 7 Tahun KAMI Unity Day - 25 Agustus 2025 🎉</h2>
+    </header>
+
+    <div class="flag"></div>
+
+    <main>
+        <p>Mari kita rayakan semangat persatuan dan kemerdekaan bersama!</p>
+        <div class="countdown" id="countdown"></div>
+    </main>
+
+    <footer>
+        &copy; 2025 PT. Kalbe Milko Indonesia | 8 Dekade Merdeka : Bersatu, Berkarya Tanpa Batas
+    </footer>
+
+    <script>
+        /* Countdown */
+        const eventDate = new Date("Aug 25, 2025 00:00:00").getTime();
+        const countdownEl = document.getElementById("countdown");
+
+        const timer = setInterval(() => {
+            const now = new Date().getTime();
+            const distance = eventDate - now;
+
+            if (distance < 0) {
+                clearInterval(timer);
+                countdownEl.innerHTML = "Selamat Hari Kemerdekaan & KAMI Unity Day!";
+                return;
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            countdownEl.innerHTML = `${days} Hari ${hours} Jam ${minutes} Menit ${seconds} Detik`;
+        }, 1000);
+
+        /* Animasi Kembang Api */
+        const canvas = document.getElementById("fireworks");
+        const ctx = canvas.getContext("2d");
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener("resize", resizeCanvas);
+        resizeCanvas();
+
+        function random(min, max) {
+            return Math.random() * (max - min) + min;
+        }
+
+        function createFirework(x, y) {
+            let colors = ["#ff0000", "#ffffff", "#008000", "#00bfff", "#ffff00"];
+            for (let i = 0; i < 50; i++) {
+                particles.push({
+                    x: x,
+                    y: y,
+                    angle: random(0, Math.PI * 2),
+                    speed: random(1, 6),
+                    radius: random(2, 4),
+                    life: 100,
+                    color: colors[Math.floor(Math.random() * colors.length)]
+                });
+            }
+        }
+
+        function updateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach((p, i) => {
+                p.x += Math.cos(p.angle) * p.speed;
+                p.y += Math.sin(p.angle) * p.speed;
+                p.life--;
+                p.speed *= 0.98;
+
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fillStyle = p.color;
+                ctx.fill();
+
+                if (p.life <= 0) {
+                    particles.splice(i, 1);
+                }
+            });
+        }
+
+        function loop() {
+            updateParticles();
+            requestAnimationFrame(loop);
+        }
+        loop();
+
+        setInterval(() => {
+            createFirework(random(100, window.innerWidth - 100), random(50, window.innerHeight / 2));
+        }, 800);
+    </script>
+</body>
+</html>
